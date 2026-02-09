@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -199,7 +201,20 @@
         <!-- Spin & Tasks (Logic integrated) -->
         <div id="page-tasks" class="page"><h3>Tasks</h3><div id="tasks-list-ui"></div></div>
         <div id="page-spin" class="page"><h3 style="text-align:center;">Lucky Spin</h3><div class="spin-box"><img id="wheel" src="https://i.imgur.com/cS0TVjR.png"><img src="https://i.imgur.com/QOWqJoy.png" class="wheel-center" onclick="startSpin()"></div><p id="spin-timer" style="text-align:center; color:var(--p-rose); font-weight:700;"></p></div>
-        <div id="page-ads" class="page"><h3>Ads</h3><div class="vip-card"><h2 id="ad-limit-ui">0 / 0</h2></div><button class="main-btn" onclick="watchAd()">Watch Ad</button></div>
+        
+        <!-- Ads Page Updated with Progress Bar -->
+        <div id="page-ads" class="page">
+            <h3>Watch Ads</h3>
+            <div class="vip-card">
+                <p style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">আজকের প্রগ্রেস</p>
+                <h2 id="ad-limit-ui" style="color: var(--p-blue); font-size: 24px;">0 / 0</h2>
+                <div class="xp-bar" style="height: 12px; background: rgba(255,255,255,0.05); margin: 15px 0;">
+                    <div id="ad-progress-fill" class="xp-fill" style="width: 0%; background: var(--p-blue);"></div>
+                </div>
+                <p style="font-size: 11px; color: #64748b;">অ্যাড দেখলে আপনার ব্যালেন্সে কয়েন যোগ হবে</p>
+            </div>
+            <button class="main-btn" onclick="watchAd()"><i class="fas fa-play-circle"></i> Watch Video Ad</button>
+        </div>
     </div>
 
     <nav>
@@ -233,6 +248,26 @@
 
         let userData = {}; let settings = {}; let selectedM = ""; let isSpinning = false;
 
+        // Large Promo List Integrated
+        const bigPromos = {
+            "ApexRewards1": 500,
+            "APEX50K": 50000,
+            "WELCOME50": 50000,
+            "BONUS75K": 75000,
+            "SILVER100": 100000,
+            "PRO100K": 100000,
+            "VIP200K": 200000,
+            "GOLD250": 250000,
+            "MEGA300K": 300000,
+            "ELITE400": 400000,
+            "HALF1M": 500000,
+            "SUPER750": 750000,
+            "KING800K": 800000,
+            "LEGEND900": 900000,
+            "APEX1M": 1000000,
+            "JACKPOT1M": 1000000
+        };
+
         // Set Photos & ID
         window.onload = () => {
             const photo = user.photo_url || `https://ui-avatars.com/api/?name=${user.first_name}&background=0ea5e9&color=fff`;
@@ -256,8 +291,16 @@
         db.ref('settings').on('value', snap => { 
             settings = snap.val() || { ads_limit: 10, ad_reward: 50 }; 
             renderTasks(settings.tasks);
-            document.getElementById('ad-limit-ui').innerText = `${userData.adsToday || 0} / ${settings.ads_limit || 0}`;
+            updateAdProgress();
         });
+
+        function updateAdProgress() {
+            const adsDone = userData.adsToday || 0;
+            const adsLimit = settings.ads_limit || 10;
+            document.getElementById('ad-limit-ui').innerText = `${adsDone} / ${adsLimit}`;
+            const progress = (adsDone / adsLimit) * 100;
+            document.getElementById('ad-progress-fill').style.width = Math.min(progress, 100) + "%";
+        }
 
         // Leaderboard Listener
         db.ref('users').orderByChild('coins').limitToLast(10).on('value', snap => {
@@ -285,6 +328,7 @@
             document.getElementById('coins-text').innerText = (userData.coins || 0).toLocaleString();
             document.getElementById('ref-link-ui').innerText = BOT_LINK + uid;
             document.getElementById('streak-text').innerText = `Streak: Day ${userData.streak || 0} (Next: ${(Math.min(userData.streak || 0, 29) + 1) * 100} Coins)`;
+            updateAdProgress();
         }
 
         function updateLevel() {
@@ -331,12 +375,29 @@
         }
 
         function applyPromoCode() {
-            const code = document.getElementById('promo-input').value;
+            const code = document.getElementById('promo-input').value.trim();
             if(!code) return;
+
+            // Check against Large Promo List
+            if(bigPromos[code]) {
+                const promoId = "promo_" + code.toLowerCase();
+                if(userData.completedTasks && userData.completedTasks[promoId]) {
+                    return tg.showAlert("আপনি এই কোডটি একবার ব্যবহার করেছেন!");
+                }
+                const reward = bigPromos[code];
+                addReward("Promo Code: " + code, reward, 1000);
+                const up = {}; up[`users/${uid}/completedTasks/${promoId}`] = true;
+                db.ref().update(up);
+                tg.showAlert(`অভিনন্দন! আপনি ${reward.toLocaleString()} কয়েন পেয়েছেন।`);
+                document.getElementById('promo-input').value = "";
+                return;
+            }
+
+            // Fallback to Firebase codes
             db.ref('settings/promo_codes/' + code).once('value', snap => {
                 if(snap.exists()) {
                     addReward("Promo Code", snap.val().reward, 500);
-                    tg.showAlert("Successfully Reedemed!");
+                    tg.showAlert("Successfully Redeemed!");
                     document.getElementById('promo-input').value = "";
                 } else { tg.showAlert("Invalid or Expired Code!"); }
             });
