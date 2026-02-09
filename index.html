@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APEX REWARDS - Final Pro Edition</title>
+    <title>APEX REWARDS - Super Pro Edition</title>
     
+    <!-- Scripts -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -22,15 +24,19 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         body { background: var(--bg); color: #f8fafc; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* Sidebar Menu */
-        #sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: #020617; z-index: 5000; transition: 0.4s; border-right: 1px solid var(--border); padding: 20px; }
+        /* Sidebar Updated with Fixed Icons */
+        #sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: #020617; z-index: 5000; transition: 0.4s; border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
         #sidebar.active { left: 0; }
         #sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 4999; display: none; }
-        .sidebar-user-info { text-align: center; padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
-        .sidebar-avatar { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--p-blue); margin-bottom: 10px; object-fit: cover; background: #1e293b; }
-        .sidebar-item { padding: 12px; border-radius: 12px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #94a3b8; font-size: 15px; }
-        .sidebar-item img { width: 22px; height: 22px; }
+        
+        .sidebar-user-info { text-align: center; padding: 15px 0; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
+        .sidebar-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--p-blue); margin-bottom: 10px; object-fit: cover; background: #1e293b; }
+        
+        .sidebar-item { padding: 12px; border-radius: 12px; margin-bottom: 5px; display: flex; align-items: center; gap: 15px; cursor: pointer; color: #94a3b8; font-size: 15px; transition: 0.3s; }
+        .sidebar-item i { width: 20px; color: var(--p-blue); font-size: 18px; text-align: center; }
+        .sidebar-item:active { background: rgba(56, 189, 248, 0.1); color: var(--p-blue); }
 
+        /* Header */
         header { padding: 12px 18px; background: var(--glass); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 100; }
         .menu-btn { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--p-blue); border: 1px solid var(--border); cursor: pointer; }
 
@@ -39,25 +45,37 @@
         .page.active { display: block; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
+        /* Level Progress Bar */
+        .level-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 10px 15px; border-radius: 15px; margin-bottom: 15px; }
+        .xp-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 8px; overflow: hidden; }
+        .xp-fill { height: 100%; background: linear-gradient(90deg, var(--p-blue), var(--p-green)); width: 0%; transition: 0.5s; }
+
+        /* Cards */
         .vip-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 12px; }
         .balance-main { font-size: 28px; font-weight: 800; color: #fff; margin: 2px 0; }
-        .coin-img-large { width: 75px; height: 75px; margin: 10px auto; display: block; animation: spinCoin 4s infinite linear; }
+        .coin-img-large { width: 75px; height: 75px; margin: 8px auto; display: block; animation: spinCoin 4s infinite linear; }
         @keyframes spinCoin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
 
         .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        .grid-item { background: var(--glass); border: 1px solid var(--border); padding: 15px; border-radius: 18px; text-align: center; cursor: pointer; border: 1px solid var(--border); }
+        .grid-item { background: var(--glass); border: 1px solid var(--border); padding: 15px; border-radius: 18px; text-align: center; cursor: pointer; }
         .grid-item img { width: 30px; height: 30px; margin-bottom: 6px; margin-left: auto; margin-right: auto; }
         .grid-item.selected { border-color: var(--p-blue); background: rgba(56, 189, 248, 0.1); }
-        
+
+        /* Record Items */
+        .record-card { background: rgba(255,255,255,0.02); padding: 10px 15px; border-radius: 15px; margin-bottom: 8px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .status-badge { font-size: 9px; padding: 3px 8px; border-radius: 6px; font-weight: 700; text-transform: uppercase; }
+
+        /* Navigation */
         nav { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 70px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); border-radius: 25px; display: flex; justify-content: space-around; align-items: center; border: 1px solid var(--border); z-index: 1000; }
         .nav-btn { color: #64748b; font-size: 10px; text-align: center; flex: 1; cursor: pointer; opacity: 0.6; }
         .nav-btn.active { color: var(--p-blue); opacity: 1; transform: translateY(-3px); }
         .nav-btn img { width: 24px; height: 24px; margin-bottom: 4px; display: block; margin-left: auto; margin-right: auto; }
 
+        /* Buttons & Inputs */
         .main-btn { width: 100%; padding: 14px; border-radius: 15px; border: none; font-weight: 700; background: var(--p-blue); color: #000; cursor: pointer; margin-top: 10px; }
         input { width: 100%; padding: 12px; margin-top: 8px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: #fff; outline: none; }
         
-        .task-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--glass); border: 1px solid var(--border); border-radius: 18px; margin-bottom: 12px; }
+        .task-card { display: flex; align-items: center; gap: 12px; padding: 15px; background: var(--glass); border: 1px solid var(--border); border-radius: 18px; margin-bottom: 12px; }
         .claim-btn { padding: 8px 15px; border-radius: 10px; border: none; font-weight: 600; font-size: 12px; cursor: pointer; }
         .btn-active { background: var(--p-blue); color: #000; }
         .btn-done { background: rgba(255,255,255,0.05); color: #64748b; cursor: not-allowed; }
@@ -74,15 +92,17 @@
     <div id="sidebar">
         <div class="sidebar-user-info">
             <img id="side-avatar" src="" class="sidebar-avatar">
-            <h4 id="side-name" style="color:#fff; font-size: 14px;">User Name</h4>
-            <p id="side-id" style="font-size:11px; color:var(--p-blue);">ID: 000000</p>
+            <h4 id="side-name" style="color:#fff; font-size: 14px;">Guest</h4>
+            <p id="side-id" style="font-size:10px; color:var(--p-blue);">ID: 000000</p>
         </div>
-        <div class="sidebar-item" onclick="changePage('home')"><img src="https://i.imgur.com/MYtcYxA.png"> Home</div>
-        <div class="sidebar-item" onclick="changePage('ads')"><img src="https://i.imgur.com/jJykK8R.png"> Watch Ads</div>
-        <div class="sidebar-item" onclick="changePage('tasks')"><img src="https://i.imgur.com/v23Q8QX.png"> VIP Tasks</div>
-        <div class="sidebar-item" onclick="changePage('spin')"><img src="https://i.imgur.com/cS0TVjR.png"> Lucky Spin</div>
-        <div class="sidebar-item" onclick="changePage('profile')"><img src="https://i.imgur.com/ucuYUZh.png"> Profile</div>
-        <div class="sidebar-item" onclick="changePage('withdraw')"><img src="https://i.imgur.com/QCnuzcr.png"> Cash Out</div>
+        <!-- Sidebar Icons Fixed -->
+        <div class="sidebar-item" onclick="changePage('home')"><i class="fas fa-house"></i> Home</div>
+        <div class="sidebar-item" onclick="changePage('leader')"><i class="fas fa-ranking-star"></i> Leaderboard</div>
+        <div class="sidebar-item" onclick="changePage('tasks')"><i class="fas fa-list-check"></i> VIP Tasks</div>
+        <div class="sidebar-item" onclick="changePage('spin')"><i class="fas fa-dharmachakra"></i> Lucky Spin</div>
+        <div class="sidebar-item" onclick="changePage('promo')"><i class="fas fa-ticket"></i> Promo Code</div>
+        <div class="sidebar-item" onclick="changePage('withdraw')"><i class="fas fa-wallet"></i> Cash Out</div>
+        <div class="sidebar-item" onclick="changePage('profile')"><i class="fas fa-user-gear"></i> My Profile</div>
     </div>
 
     <header>
@@ -92,69 +112,94 @@
     </header>
 
     <div class="content">
-        <!-- Home -->
+        <!-- Home Page -->
         <div id="page-home" class="page active">
+            <!-- Level & XP Feature -->
+            <div class="level-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size: 10px;">
+                    <span style="color:var(--p-gold); font-weight:700;">Level <span id="user-lv">1</span></span>
+                    <span>XP: <span id="xp-current">0</span>/1000</span>
+                </div>
+                <div class="xp-bar"><div id="xp-fill" class="xp-fill"></div></div>
+            </div>
+
             <div class="vip-card">
                 <p style="font-size: 10px; color: #94a3b8;">TOTAL BALANCE</p>
                 <h1 class="balance-main" id="bdt-text">0.00</h1>
                 <img src="https://i.imgur.com/mOvO9dQ.png" class="coin-img-large">
                 <h2 id="coins-text" style="font-size: 22px; color: var(--p-gold);">0</h2>
                 <button class="main-btn" style="background:var(--p-green); color:#fff; width: 85%; margin: 8px auto;" onclick="dailyCheckIn()">🎁 Claim Daily Bonus</button>
-                <p id="streak-text" style="font-size: 11px; color: var(--p-gold);">Streak: Day 0 (Next: 100 Coins)</p>
+                <p id="streak-text" style="font-size: 11px; color: var(--p-gold);">Streak: Day 0</p>
             </div>
             <div class="feature-grid">
                 <div class="grid-item" onclick="changePage('ads')"><img src="https://i.imgur.com/jJykK8R.png"><p>Ads</p></div>
                 <div class="grid-item" onclick="changePage('tasks')"><img src="https://i.imgur.com/v23Q8QX.png"><p>Tasks</p></div>
                 <div class="grid-item" onclick="changePage('spin')"><img src="https://i.imgur.com/cS0TVjR.png"><p>Spin</p></div>
-                <div class="grid-item" onclick="changePage('profile')"><img src="https://i.imgur.com/ucuYUZh.png"><p>Profile</p></div>
+                <div class="grid-item" onclick="changePage('leader')"><img src="https://cdn-icons-png.flaticon.com/512/2817/2817923.png"><p>Ranking</p></div>
             </div>
         </div>
 
-        <!-- Withdrawal (Logos Corrected) -->
+        <!-- Leaderboard Page -->
+        <div id="page-leader" class="page">
+            <h4 style="margin-bottom: 15px;"><i class="fas fa-trophy" style="color:var(--p-gold);"></i> Global Leaderboard</h4>
+            <div id="leader-list-display"></div>
+        </div>
+
+        <!-- Promo Code Page -->
+        <div id="page-promo" class="page">
+            <div class="vip-card">
+                <i class="fas fa-ticket-alt" style="font-size:40px; color:var(--p-blue); margin-bottom: 15px;"></i>
+                <h4>Promo Code</h4>
+                <p style="font-size:12px; color:#94a3b8; margin-top:5px;">Enter a valid code to get instant coins.</p>
+                <input type="text" id="promo-input" placeholder="Enter Code Here">
+                <button class="main-btn" onclick="applyPromoCode()">Redeem Code</button>
+            </div>
+        </div>
+
+        <!-- Withdrawal Page -->
         <div id="page-withdraw" class="page">
             <h3>Withdraw Money</h3>
             <div class="vip-card" style="margin-top:10px;"><h2 style="color:var(--p-green);">৳ <span id="draw-bdt">0.00</span></h2></div>
-            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Select Payment Method:</p>
+            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Select Method:</p>
             <div style="display:flex; gap:12px; margin-bottom:15px;">
                 <div class="grid-item" style="flex:1" id="m-bkash" onclick="selectM('bkash')">
-                    <img src="https://i.imgur.com/uwvNPyY.png"> <!-- Correct bKash -->
+                    <img src="https://i.imgur.com/uwvNPyY.png"> <!-- bKash -->
                     <p>bKash</p>
                 </div>
                 <div class="grid-item" style="flex:1" id="m-nagad" onclick="selectM('nagad')">
-                    <img src="https://i.imgur.com/WMswd3J.png"> <!-- Correct Nagad -->
+                    <img src="https://i.imgur.com/WMswd3J.png"> <!-- Nagad -->
                     <p>Nagad</p>
                 </div>
             </div>
             <input type="number" id="ph" placeholder="Wallet Number">
             <input type="number" id="amt" placeholder="Amount (৳)">
             <button class="main-btn" style="background:var(--p-green); color:#fff;" onclick="requestWithdraw()">Confirm</button>
+            
+            <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 14px; color: var(--p-blue);">Withdraw History</h4>
+            <div id="draw-history-list"></div>
         </div>
 
-        <!-- Tasks (Rendering Included) -->
-        <div id="page-tasks" class="page">
-            <h3>VIP Tasks</h3>
-            <div id="tasks-list-ui" style="margin-top:15px;"></div>
-        </div>
-
-        <!-- Profile (Refer Link Restored) -->
+        <!-- Profile Page -->
         <div id="page-profile" class="page">
-            <h3>My Profile</h3>
             <div class="vip-card" style="margin-top:15px;">
-                <img id="prof-avatar" src="" style="width: 75px; height: 75px; border-radius: 50%; border: 3px solid var(--p-blue); object-fit: cover; background:#1e293b;">
-                <h3 id="prof-name" style="margin-top:10px;">User Name</h3>
-                <p id="prof-id" style="font-size:12px; color:#94a3b8; margin-bottom: 15px;">ID: 000000</p>
+                <img id="prof-avatar" src="" style="width: 75px; height: 75px; border-radius: 50%; border: 3px solid var(--p-blue); object-fit: cover;">
+                <h3 id="prof-name" style="margin-top:10px;">User</h3>
+                <p id="prof-id" style="font-size:12px; color:#94a3b8; margin-bottom: 15px;">Telegram ID: 000000</p>
                 
                 <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:18px; text-align:left; border:1px solid var(--border);">
-                    <small style="color:#94a3b8; font-size: 10px; display: block; margin-bottom: 5px;">আপনার রেফার লিংক:</small>
-                    <p id="ref-link-ui" style="color:var(--p-blue); word-break:break-all; font-weight:600; font-size: 11px; line-height: 1.4;"></p>
-                    <button class="main-btn" style="padding:10px; font-size:12px; margin-top:10px; height: auto;" onclick="copyLink()">Copy My Link</button>
+                    <small style="color:#94a3b8; font-size: 10px;">রেফার লিংক:</small>
+                    <p id="ref-link-ui" style="color:var(--p-blue); word-break:break-all; font-weight:600; font-size: 11px;"></p>
+                    <button class="main-btn" style="padding:8px; font-size:11px; margin-top:10px; height: auto;" onclick="copyLink()">Copy Link</button>
                 </div>
             </div>
+            <h4 style="margin-top: 15px; margin-bottom: 10px; font-size: 14px; color: var(--p-green);">Earning Records</h4>
+            <div id="earn-history-list"></div>
         </div>
 
-        <!-- Spin & Ads Placeholders -->
+        <!-- Spin & Tasks (Logic integrated) -->
+        <div id="page-tasks" class="page"><h3>Tasks</h3><div id="tasks-list-ui"></div></div>
         <div id="page-spin" class="page"><h3 style="text-align:center;">Lucky Spin</h3><div class="spin-box"><img id="wheel" src="https://i.imgur.com/cS0TVjR.png"><img src="https://i.imgur.com/QOWqJoy.png" class="wheel-center" onclick="startSpin()"></div><p id="spin-timer" style="text-align:center; color:var(--p-rose); font-weight:700;"></p></div>
-        <div id="page-ads" class="page"><h3>Ads</h3><div class="vip-card"><p>Daily Limit</p><h2 id="ad-limit-ui">0 / 0</h2></div><button class="main-btn" onclick="watchAd()">Watch Ad</button></div>
+        <div id="page-ads" class="page"><h3>Ads</h3><div class="vip-card"><h2 id="ad-limit-ui">0 / 0</h2></div><button class="main-btn" onclick="watchAd()">Watch Ad</button></div>
     </div>
 
     <nav>
@@ -162,7 +207,7 @@
         <div class="nav-btn" id="btn-ads" onclick="changePage('ads')"><img src="https://i.imgur.com/jJykK8R.png">Ads</div>
         <div class="nav-btn" id="btn-tasks" onclick="changePage('tasks')"><img src="https://i.imgur.com/v23Q8QX.png">Tasks</div>
         <div class="nav-btn" id="btn-withdraw" onclick="changePage('withdraw')"><img src="https://i.imgur.com/QCnuzcr.png">Bank</div>
-        <div class="nav-btn" id="btn-profile" onclick="changePage('profile')"><img src="https://i.imgur.com/ucuYUZh.png">Profile</div>
+        <div class="nav-btn" id="btn-profile" onclick="changePage('profile')"><img src="https://i.imgur.com/ucuYUZh.png">Me</div>
     </nav>
 
     <script>
@@ -188,7 +233,7 @@
 
         let userData = {}; let settings = {}; let selectedM = ""; let isSpinning = false;
 
-        // Load Photos
+        // Set Photos & ID
         window.onload = () => {
             const photo = user.photo_url || `https://ui-avatars.com/api/?name=${user.first_name}&background=0ea5e9&color=fff`;
             document.getElementById('prof-avatar').src = photo;
@@ -200,9 +245,11 @@
         };
 
         db.ref('users/' + uid).on('value', snap => {
-            userData = snap.val() || { coins: 0, adsToday: 0, lastSpin: 0, streak: 0, lastCheck: "", completedTasks: {} };
+            userData = snap.val() || { coins: 0, xp: 0, adsToday: 0, lastSpin: 0, streak: 0, lastCheck: "", completedTasks: {} };
             updateUI();
             checkSpinTimer();
+            updateLevel();
+            renderEarnHistory();
             if(settings.tasks) renderTasks(settings.tasks);
         });
 
@@ -210,6 +257,24 @@
             settings = snap.val() || { ads_limit: 10, ad_reward: 50 }; 
             renderTasks(settings.tasks);
             document.getElementById('ad-limit-ui').innerText = `${userData.adsToday || 0} / ${settings.ads_limit || 0}`;
+        });
+
+        // Leaderboard Listener
+        db.ref('users').orderByChild('coins').limitToLast(10).on('value', snap => {
+            const leaderList = document.getElementById('leader-list-display');
+            leaderList.innerHTML = "";
+            let arr = [];
+            snap.forEach(c => arr.push(c.val()));
+            arr.reverse().forEach((u, i) => {
+                leaderList.innerHTML += `<div class="record-card">
+                    <span>#${i+1} ${u.name || 'User'}</span>
+                    <b style="color:var(--p-gold);">${u.coins.toLocaleString()}</b>
+                </div>`;
+            });
+        });
+
+        db.ref('withdraws').orderByChild('uid').equalTo(uid).on('value', snap => {
+            renderWithdrawHistory(snap.val());
         });
 
         function updateUI() {
@@ -222,6 +287,25 @@
             document.getElementById('streak-text').innerText = `Streak: Day ${userData.streak || 0} (Next: ${(Math.min(userData.streak || 0, 29) + 1) * 100} Coins)`;
         }
 
+        function updateLevel() {
+            const xp = userData.xp || 0;
+            const lv = Math.floor(xp / 1000) + 1;
+            const percent = (xp % 1000) / 10;
+            document.getElementById('user-lv').innerText = lv;
+            document.getElementById('xp-current').innerText = xp % 1000;
+            document.getElementById('xp-fill').style.width = percent + "%";
+        }
+
+        function addReward(type, coins, xp) {
+            const up = {};
+            up[`users/${uid}/coins`] = (userData.coins || 0) + coins;
+            up[`users/${uid}/xp`] = (userData.xp || 0) + xp;
+            db.ref().update(up);
+            db.ref(`users/${uid}/history`).push({ type, amount: coins, date: Date.now() });
+            tg.HapticFeedback.notificationOccurred('success');
+            confetti({ particleCount: 50, spread: 50 });
+        }
+
         function renderTasks(tasks) {
             const listUI = document.getElementById('tasks-list-ui');
             if(!tasks) { listUI.innerHTML = `<p style="text-align:center; color:#64748b; font-size:12px;">No Tasks Available.</p>`; return; }
@@ -231,7 +315,7 @@
                 const done = userData.completedTasks && userData.completedTasks[id];
                 listUI.innerHTML += `
                 <div class="task-card">
-                    <div style="width:35px; height:35px; background:rgba(56,189,248,0.1); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--p-blue);"><i class="fas fa-tasks"></i></div>
+                    <div style="width:35px; height:35px; background:rgba(56,189,248,0.1); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--p-blue); font-size:14px;"><i class="fas fa-tasks"></i></div>
                     <div style="flex:1;"><b>${t.title}</b><br><small style="color:var(--p-gold);">+${t.reward} Coins</small></div>
                     <button class="claim-btn ${done ? 'btn-done' : 'btn-active'}" onclick="${done ? '' : `handleTask('${t.link}', '${id}', ${t.reward})`}">${done ? 'Done' : 'Claim'}</button>
                 </div>`;
@@ -240,24 +324,31 @@
 
         function handleTask(link, id, reward) {
             tg.openLink(link);
-            setTimeout(() => { if(confirm("Joined?")) claimTask(id, reward); }, 2000);
+            setTimeout(() => { if(confirm("Joined Successfully?")) {
+                const up = {}; up[`users/${uid}/completedTasks/${id}`] = true; db.ref().update(up);
+                addReward("Task Reward", reward, 200);
+            }}, 2000);
         }
 
-        function claimTask(id, reward) {
-            if(userData.completedTasks?.[id]) return;
-            const up = {};
-            up[`users/${uid}/coins`] = (userData.coins || 0) + parseInt(reward);
-            up[`users/${uid}/completedTasks/${id}`] = true;
-            db.ref().update(up).then(() => { confetti(); tg.showAlert("Success!"); });
+        function applyPromoCode() {
+            const code = document.getElementById('promo-input').value;
+            if(!code) return;
+            db.ref('settings/promo_codes/' + code).once('value', snap => {
+                if(snap.exists()) {
+                    addReward("Promo Code", snap.val().reward, 500);
+                    tg.showAlert("Successfully Reedemed!");
+                    document.getElementById('promo-input').value = "";
+                } else { tg.showAlert("Invalid or Expired Code!"); }
+            });
         }
 
         function watchAd() {
             if(userData.adsToday >= settings.ads_limit) return tg.showAlert("Limit over!");
             const ad = window.Adsgram.init({ blockId: "22538" });
             ad.show().then(() => {
-                db.ref('users/' + uid).update({ coins: (userData.coins || 0) + parseInt(settings.ad_reward), adsToday: (userData.adsToday || 0) + 1 });
-                confetti();
-            }).catch(() => tg.showAlert("Try again!"));
+                addReward("Ad Reward", settings.ad_reward, 50);
+                db.ref('users/' + uid).update({ adsToday: (userData.adsToday || 0) + 1 });
+            });
         }
 
         function startSpin() {
@@ -269,8 +360,8 @@
             wheel.style.transform = `rotate(${rot}deg)`;
             setTimeout(() => {
                 isSpinning = false;
-                db.ref('users/' + uid).update({ coins: (userData.coins || 0) + 100, lastSpin: Date.now() });
-                confetti(); tg.showAlert("Won 100 Coins!");
+                addReward("Spin Reward", 100, 100);
+                db.ref('users/' + uid).update({ lastSpin: Date.now() });
             }, 5100);
         }
 
@@ -281,8 +372,28 @@
             let streak = (userData.lastCheck === yesterday.toDateString()) ? (userData.streak || 0) + 1 : 1;
             if(streak > 30) streak = 1;
             const bonus = streak * 100;
-            db.ref('users/' + uid).update({ coins: (userData.coins || 0) + bonus, streak: streak, lastCheck: today });
-            confetti(); tg.showAlert(`Day ${streak} Bonus!`);
+            addReward("Daily Bonus", bonus, 150);
+            db.ref('users/' + uid).update({ streak: streak, lastCheck: today });
+        }
+
+        function renderEarnHistory() {
+            const earnList = document.getElementById('earn-history-list');
+            earnList.innerHTML = "";
+            if(userData.history) {
+                Object.values(userData.history).reverse().slice(0, 5).forEach(l => {
+                    earnList.innerHTML += `<div class="record-card"><div><b>${l.type}</b><br><small style="font-size:9px;">${new Date(l.date).toLocaleDateString()}</small></div><b style="color:var(--p-green);">+${l.amount}</b></div>`;
+                });
+            }
+        }
+
+        function renderWithdrawHistory(data) {
+            const list = document.getElementById('draw-history-list');
+            list.innerHTML = "";
+            if(data) {
+                Object.values(data).reverse().slice(0, 5).forEach(w => {
+                    list.innerHTML += `<div class="record-card"><div><b>৳${w.amount} (${w.method})</b><br><small style="font-size:9px;">${new Date(w.date).toLocaleDateString()}</small></div><span class="status-badge" style="color:${w.status==='paid'? 'var(--p-green)':'var(--p-gold)'};">${w.status}</span></div>`;
+                });
+            }
         }
 
         function selectM(m) {
@@ -294,22 +405,19 @@
         function requestWithdraw() {
             const amt = document.getElementById('amt').value;
             const ph = document.getElementById('ph').value;
-            if(!selectedM || !amt || !ph) return tg.showAlert("Fill all fields!");
-            const need = Math.floor(amt / RATE);
-            if(userData.coins < need) return tg.showAlert("Low balance!");
+            if(!selectedM || !amt || !ph) return tg.showAlert("Fill all!");
+            if(userData.coins < (amt/RATE)) return tg.showAlert("Low Balance!");
             db.ref('withdraws').push({ uid, phone: ph, amount: amt, method: selectedM, status: "pending", date: Date.now() });
-            db.ref('users/' + uid).update({ coins: userData.coins - need });
-            tg.showAlert("Submitted Successfully!");
+            db.ref('users/' + uid).update({ coins: userData.coins - (amt/RATE) });
+            tg.showAlert("Submitted!");
         }
 
         function copyLink() {
             const el = document.createElement('textarea');
-            el.value = BOT_LINK + uid;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
+            el.value = BOT_LINK + uid; document.body.appendChild(el);
+            el.select(); document.execCommand('copy');
             document.body.removeChild(el);
-            tg.showAlert("Link copied to clipboard!");
+            tg.showAlert("Copied!");
         }
 
         function checkSpinTimer() {
@@ -333,8 +441,9 @@
             document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
             document.getElementById('page-' + p).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(nb => nb.classList.remove('active'));
-            document.getElementById('btn-' + (p==='spin' ? 'home' : p))?.classList.add('active');
+            if(document.getElementById('btn-' + p)) document.getElementById('btn-' + p).classList.add('active');
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+            tg.HapticFeedback.impactOccurred('light');
         }
     </script>
 </body>
