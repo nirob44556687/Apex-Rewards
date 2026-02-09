@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APEX REWARDS - Professional Edition</title>
+    <title>APEX REWARDS - Final Pro Edition</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
@@ -22,11 +22,14 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         body { background: var(--bg); color: #f8fafc; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        #sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: #020617; z-index: 5000; transition: 0.4s; border-right: 1px solid var(--border); padding: 30px 20px; }
+        /* Sidebar Menu */
+        #sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: #020617; z-index: 5000; transition: 0.4s; border-right: 1px solid var(--border); padding: 20px; }
         #sidebar.active { left: 0; }
         #sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 4999; display: none; }
-        .sidebar-item { padding: 14px; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 15px; cursor: pointer; color: #94a3b8; transition: 0.3s; }
-        .sidebar-item img { width: 24px; height: 24px; }
+        .sidebar-user-info { text-align: center; padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
+        .sidebar-avatar { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--p-blue); margin-bottom: 10px; object-fit: cover; background: #1e293b; }
+        .sidebar-item { padding: 12px; border-radius: 12px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #94a3b8; font-size: 15px; }
+        .sidebar-item img { width: 22px; height: 22px; }
 
         header { padding: 12px 18px; background: var(--glass); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 100; }
         .menu-btn { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--p-blue); border: 1px solid var(--border); cursor: pointer; }
@@ -37,36 +40,43 @@
         @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
         .vip-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 12px; }
-        .balance-main { font-size: 30px; font-weight: 800; color: #fff; margin: 2px 0; }
-        .coin-img-large { width: 80px; height: 80px; margin: 10px auto; display: block; animation: spinCoin 4s infinite linear; }
+        .balance-main { font-size: 28px; font-weight: 800; color: #fff; margin: 2px 0; }
+        .coin-img-large { width: 75px; height: 75px; margin: 10px auto; display: block; animation: spinCoin 4s infinite linear; }
         @keyframes spinCoin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
 
         .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        .grid-item { background: var(--glass); border: 1px solid var(--border); padding: 18px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .grid-item img { width: 30px; height: 30px; margin-bottom: 8px; margin-left: auto; margin-right: auto; }
+        .grid-item { background: var(--glass); border: 1px solid var(--border); padding: 15px; border-radius: 18px; text-align: center; cursor: pointer; border: 1px solid var(--border); }
+        .grid-item img { width: 30px; height: 30px; margin-bottom: 6px; margin-left: auto; margin-right: auto; }
         .grid-item.selected { border-color: var(--p-blue); background: rgba(56, 189, 248, 0.1); }
         
+        nav { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 70px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); border-radius: 25px; display: flex; justify-content: space-around; align-items: center; border: 1px solid var(--border); z-index: 1000; }
+        .nav-btn { color: #64748b; font-size: 10px; text-align: center; flex: 1; cursor: pointer; opacity: 0.6; }
+        .nav-btn.active { color: var(--p-blue); opacity: 1; transform: translateY(-3px); }
+        .nav-btn img { width: 24px; height: 24px; margin-bottom: 4px; display: block; margin-left: auto; margin-right: auto; }
+
+        .main-btn { width: 100%; padding: 14px; border-radius: 15px; border: none; font-weight: 700; background: var(--p-blue); color: #000; cursor: pointer; margin-top: 10px; }
+        input { width: 100%; padding: 12px; margin-top: 8px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: #fff; outline: none; }
+        
+        .task-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--glass); border: 1px solid var(--border); border-radius: 18px; margin-bottom: 12px; }
+        .claim-btn { padding: 8px 15px; border-radius: 10px; border: none; font-weight: 600; font-size: 12px; cursor: pointer; }
+        .btn-active { background: var(--p-blue); color: #000; }
+        .btn-done { background: rgba(255,255,255,0.05); color: #64748b; cursor: not-allowed; }
+
         /* Spin Wheel */
         .spin-box { position: relative; width: 260px; height: 260px; margin: 15px auto; display: flex; align-items: center; justify-content: center; }
         #wheel { width: 100%; height: 100%; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); }
-        .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; z-index: 10; cursor: pointer; }
-
-        nav { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 75px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); border-radius: 25px; display: flex; justify-content: space-around; align-items: center; border: 1px solid var(--border); z-index: 1000; }
-        .nav-btn { color: #64748b; font-size: 10px; text-align: center; flex: 1; cursor: pointer; opacity: 0.6; }
-        .nav-btn.active { color: var(--p-blue); opacity: 1; transform: translateY(-3px); }
-        .nav-btn img { width: 26px; height: 26px; margin-bottom: 4px; display: block; margin-left: auto; margin-right: auto; }
-
-        .main-btn { width: 100%; padding: 15px; border-radius: 18px; border: none; font-weight: 700; background: var(--p-blue); color: #000; cursor: pointer; margin-top: 10px; }
-        input { width: 100%; padding: 14px; margin-top: 10px; border-radius: 15px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: #fff; outline: none; }
-        
-        .task-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--glass); border: 1px solid var(--border); border-radius: 18px; margin-bottom: 12px; }
+        .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55px; z-index: 10; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div id="sidebar">
-        <h2 style="color:var(--p-blue); margin-bottom:30px;">APEX REWARDS</h2>
+        <div class="sidebar-user-info">
+            <img id="side-avatar" src="" class="sidebar-avatar">
+            <h4 id="side-name" style="color:#fff; font-size: 14px;">User Name</h4>
+            <p id="side-id" style="font-size:11px; color:var(--p-blue);">ID: 000000</p>
+        </div>
         <div class="sidebar-item" onclick="changePage('home')"><img src="https://i.imgur.com/MYtcYxA.png"> Home</div>
         <div class="sidebar-item" onclick="changePage('ads')"><img src="https://i.imgur.com/jJykK8R.png"> Watch Ads</div>
         <div class="sidebar-item" onclick="changePage('tasks')"><img src="https://i.imgur.com/v23Q8QX.png"> VIP Tasks</div>
@@ -82,17 +92,16 @@
     </header>
 
     <div class="content">
-        <!-- Home Page -->
+        <!-- Home -->
         <div id="page-home" class="page active">
             <div class="vip-card">
-                <p style="font-size: 11px; color: #94a3b8;">TOTAL BALANCE</p>
+                <p style="font-size: 10px; color: #94a3b8;">TOTAL BALANCE</p>
                 <h1 class="balance-main" id="bdt-text">0.00</h1>
                 <img src="https://i.imgur.com/mOvO9dQ.png" class="coin-img-large">
-                <h2 id="coins-text" style="font-size: 24px; color: var(--p-gold);">0</h2>
-                <button class="main-btn" style="background:var(--p-green); color:#fff; width: 90%; margin: 8px auto;" onclick="dailyCheckIn()">🎁 Claim Daily Bonus</button>
-                <p id="streak-text" style="font-size: 11px; color: var(--p-gold); margin-top: 5px;">Streak: Day 0</p>
+                <h2 id="coins-text" style="font-size: 22px; color: var(--p-gold);">0</h2>
+                <button class="main-btn" style="background:var(--p-green); color:#fff; width: 85%; margin: 8px auto;" onclick="dailyCheckIn()">🎁 Claim Daily Bonus</button>
+                <p id="streak-text" style="font-size: 11px; color: var(--p-gold);">Streak: Day 0 (Next: 100 Coins)</p>
             </div>
-            
             <div class="feature-grid">
                 <div class="grid-item" onclick="changePage('ads')"><img src="https://i.imgur.com/jJykK8R.png"><p>Ads</p></div>
                 <div class="grid-item" onclick="changePage('tasks')"><img src="https://i.imgur.com/v23Q8QX.png"><p>Tasks</p></div>
@@ -101,76 +110,53 @@
             </div>
         </div>
 
-        <!-- Spin Page -->
-        <div id="page-spin" class="page">
-            <h3 style="text-align:center;">Lucky Spin (Every 24h)</h3>
-            <div class="spin-box">
-                <img id="wheel" src="https://i.imgur.com/cS0TVjR.png">
-                <img src="https://i.imgur.com/QOWqJoy.png" class="wheel-center" onclick="startSpin()">
-            </div>
-            <div style="text-align:center;">
-                <p id="spin-timer" style="font-size:14px; color:var(--p-rose); font-weight:bold;"></p>
-                <button class="main-btn" id="spin-btn" style="width: 75%; margin: 15px auto;" onclick="startSpin()">TAP TO SPIN</button>
-            </div>
-        </div>
-
-        <!-- Withdrawal Page -->
+        <!-- Withdrawal (Logos Corrected) -->
         <div id="page-withdraw" class="page">
             <h3>Withdraw Money</h3>
             <div class="vip-card" style="margin-top:10px;"><h2 style="color:var(--p-green);">৳ <span id="draw-bdt">0.00</span></h2></div>
-            
-            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">Select Payment Method:</p>
+            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Select Payment Method:</p>
             <div style="display:flex; gap:12px; margin-bottom:15px;">
-                <!-- Fixed bKash Logo -->
                 <div class="grid-item" style="flex:1" id="m-bkash" onclick="selectM('bkash')">
-                    <img src="https://i.imgur.com/uwvNPyY.png">
+                    <img src="https://i.imgur.com/uwvNPyY.png"> <!-- Correct bKash -->
                     <p>bKash</p>
                 </div>
-                <!-- Fixed Nagad Logo -->
                 <div class="grid-item" style="flex:1" id="m-nagad" onclick="selectM('nagad')">
-                    <img src="https://i.imgur.com/WMswd3J.png">
+                    <img src="https://i.imgur.com/WMswd3J.png"> <!-- Correct Nagad -->
                     <p>Nagad</p>
                 </div>
             </div>
-
             <input type="number" id="ph" placeholder="Wallet Number">
             <input type="number" id="amt" placeholder="Amount (৳)">
             <button class="main-btn" style="background:var(--p-green); color:#fff;" onclick="requestWithdraw()">Confirm</button>
         </div>
 
-        <!-- Tasks Page -->
+        <!-- Tasks (Rendering Included) -->
         <div id="page-tasks" class="page">
             <h3>VIP Tasks</h3>
             <div id="tasks-list-ui" style="margin-top:15px;"></div>
         </div>
 
-        <!-- Ads Page -->
-        <div id="page-ads" class="page">
-            <h3>Watch Ads</h3>
-            <div class="vip-card" style="margin-top:15px;">
-                <p>Today's Limit</p>
-                <h2 id="ad-limit-ui" style="color:var(--p-blue)">0 / 0</h2>
-            </div>
-            <button class="main-btn" onclick="watchAd()">Watch Ad</button>
-        </div>
-
-        <!-- Profile Page -->
+        <!-- Profile (Refer Link Restored) -->
         <div id="page-profile" class="page">
-            <h3>User Profile</h3>
+            <h3>My Profile</h3>
             <div class="vip-card" style="margin-top:15px;">
-                <img id="prof-img-ui" src="https://via.placeholder.com/80" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--p-blue);">
-                <h3 id="prof-name-ui" style="margin-top:10px;">User</h3>
-                <p id="prof-id-ui" style="font-size:12px; color:#94a3b8;">ID: --</p>
-                <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:15px; margin-top:15px; text-align:left;">
-                    <p style="font-size:11px; color:#94a3b8;">Refer Link:</p>
-                    <small id="ref-link-ui" style="color:var(--p-blue); word-break:break-all; font-weight:600;"></small>
-                    <button class="main-btn" style="padding:10px; font-size:12px; margin-top:10px;" onclick="copyLink()">Copy Link</button>
+                <img id="prof-avatar" src="" style="width: 75px; height: 75px; border-radius: 50%; border: 3px solid var(--p-blue); object-fit: cover; background:#1e293b;">
+                <h3 id="prof-name" style="margin-top:10px;">User Name</h3>
+                <p id="prof-id" style="font-size:12px; color:#94a3b8; margin-bottom: 15px;">ID: 000000</p>
+                
+                <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:18px; text-align:left; border:1px solid var(--border);">
+                    <small style="color:#94a3b8; font-size: 10px; display: block; margin-bottom: 5px;">আপনার রেফার লিংক:</small>
+                    <p id="ref-link-ui" style="color:var(--p-blue); word-break:break-all; font-weight:600; font-size: 11px; line-height: 1.4;"></p>
+                    <button class="main-btn" style="padding:10px; font-size:12px; margin-top:10px; height: auto;" onclick="copyLink()">Copy My Link</button>
                 </div>
             </div>
         </div>
+
+        <!-- Spin & Ads Placeholders -->
+        <div id="page-spin" class="page"><h3 style="text-align:center;">Lucky Spin</h3><div class="spin-box"><img id="wheel" src="https://i.imgur.com/cS0TVjR.png"><img src="https://i.imgur.com/QOWqJoy.png" class="wheel-center" onclick="startSpin()"></div><p id="spin-timer" style="text-align:center; color:var(--p-rose); font-weight:700;"></p></div>
+        <div id="page-ads" class="page"><h3>Ads</h3><div class="vip-card"><p>Daily Limit</p><h2 id="ad-limit-ui">0 / 0</h2></div><button class="main-btn" onclick="watchAd()">Watch Ad</button></div>
     </div>
 
-    <!-- Navigation -->
     <nav>
         <div class="nav-btn active" id="btn-home" onclick="changePage('home')"><img src="https://i.imgur.com/MYtcYxA.png">Home</div>
         <div class="nav-btn" id="btn-ads" onclick="changePage('ads')"><img src="https://i.imgur.com/jJykK8R.png">Ads</div>
@@ -192,8 +178,9 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const tg = window.Telegram.WebApp;
+        tg.expand();
 
-        const user = tg.initDataUnsafe.user || { id: 12345, first_name: "User" };
+        const user = tg.initDataUnsafe.user || { id: 0, first_name: "Guest", photo_url: "" };
         const uid = user.id;
         const RATE = 120 / 200000;
         const SPIN_COOLDOWN = 24 * 60 * 60 * 1000;
@@ -201,10 +188,22 @@
 
         let userData = {}; let settings = {}; let selectedM = ""; let isSpinning = false;
 
+        // Load Photos
+        window.onload = () => {
+            const photo = user.photo_url || `https://ui-avatars.com/api/?name=${user.first_name}&background=0ea5e9&color=fff`;
+            document.getElementById('prof-avatar').src = photo;
+            document.getElementById('side-avatar').src = photo;
+            document.getElementById('prof-name').innerText = user.first_name;
+            document.getElementById('side-name').innerText = user.first_name;
+            document.getElementById('prof-id').innerText = "ID: " + uid;
+            document.getElementById('side-id').innerText = "ID: " + uid;
+        };
+
         db.ref('users/' + uid).on('value', snap => {
-            userData = snap.val() || { coins: 0, adsToday: 0, lastSpin: 0, streak: 0, lastCheck: "" };
+            userData = snap.val() || { coins: 0, adsToday: 0, lastSpin: 0, streak: 0, lastCheck: "", completedTasks: {} };
             updateUI();
             checkSpinTimer();
+            if(settings.tasks) renderTasks(settings.tasks);
         });
 
         db.ref('settings').on('value', snap => { 
@@ -219,30 +218,109 @@
             document.getElementById('top-bdt').innerText = "৳ " + bdt;
             document.getElementById('draw-bdt').innerText = bdt;
             document.getElementById('coins-text').innerText = (userData.coins || 0).toLocaleString();
-            document.getElementById('prof-name-ui').innerText = user.first_name;
-            document.getElementById('prof-id-ui').innerText = "ID: " + uid;
             document.getElementById('ref-link-ui').innerText = BOT_LINK + uid;
             document.getElementById('streak-text').innerText = `Streak: Day ${userData.streak || 0} (Next: ${(Math.min(userData.streak || 0, 29) + 1) * 100} Coins)`;
         }
 
-        // --- Ad Watch Fixed ---
-        function watchAd() {
-            if(userData.adsToday >= settings.ads_limit) return tg.showAlert("আজকের লিমিট শেষ!");
-            
-            const AdController = window.Adsgram.init({ blockId: "22538" });
-            
-            AdController.show().then((result) => {
-                // Ad successfully watched
-                db.ref('users/' + uid).update({ 
-                    coins: (userData.coins || 0) + parseInt(settings.ad_reward), 
-                    adsToday: (userData.adsToday || 0) + 1 
-                });
-                confetti();
-                tg.showAlert(`অভিনন্দন! আপনি ${settings.ad_reward} কয়েন পেয়েছেন।`);
-            }).catch((result) => {
-                // Ad failed or closed
-                tg.showAlert("বিজ্ঞাপন পুরোপুরি দেখা হয়নি। আবার চেষ্টা করুন।");
+        function renderTasks(tasks) {
+            const listUI = document.getElementById('tasks-list-ui');
+            if(!tasks) { listUI.innerHTML = `<p style="text-align:center; color:#64748b; font-size:12px;">No Tasks Available.</p>`; return; }
+            listUI.innerHTML = "";
+            Object.keys(tasks).forEach(id => {
+                const t = tasks[id];
+                const done = userData.completedTasks && userData.completedTasks[id];
+                listUI.innerHTML += `
+                <div class="task-card">
+                    <div style="width:35px; height:35px; background:rgba(56,189,248,0.1); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--p-blue);"><i class="fas fa-tasks"></i></div>
+                    <div style="flex:1;"><b>${t.title}</b><br><small style="color:var(--p-gold);">+${t.reward} Coins</small></div>
+                    <button class="claim-btn ${done ? 'btn-done' : 'btn-active'}" onclick="${done ? '' : `handleTask('${t.link}', '${id}', ${t.reward})`}">${done ? 'Done' : 'Claim'}</button>
+                </div>`;
             });
+        }
+
+        function handleTask(link, id, reward) {
+            tg.openLink(link);
+            setTimeout(() => { if(confirm("Joined?")) claimTask(id, reward); }, 2000);
+        }
+
+        function claimTask(id, reward) {
+            if(userData.completedTasks?.[id]) return;
+            const up = {};
+            up[`users/${uid}/coins`] = (userData.coins || 0) + parseInt(reward);
+            up[`users/${uid}/completedTasks/${id}`] = true;
+            db.ref().update(up).then(() => { confetti(); tg.showAlert("Success!"); });
+        }
+
+        function watchAd() {
+            if(userData.adsToday >= settings.ads_limit) return tg.showAlert("Limit over!");
+            const ad = window.Adsgram.init({ blockId: "22538" });
+            ad.show().then(() => {
+                db.ref('users/' + uid).update({ coins: (userData.coins || 0) + parseInt(settings.ad_reward), adsToday: (userData.adsToday || 0) + 1 });
+                confetti();
+            }).catch(() => tg.showAlert("Try again!"));
+        }
+
+        function startSpin() {
+            if(isSpinning) return;
+            if(Date.now() - (userData.lastSpin || 0) < SPIN_COOLDOWN) return tg.showAlert("Wait 24h!");
+            isSpinning = true;
+            const wheel = document.getElementById('wheel');
+            const rot = Math.floor(Math.random() * 360) + 3600; 
+            wheel.style.transform = `rotate(${rot}deg)`;
+            setTimeout(() => {
+                isSpinning = false;
+                db.ref('users/' + uid).update({ coins: (userData.coins || 0) + 100, lastSpin: Date.now() });
+                confetti(); tg.showAlert("Won 100 Coins!");
+            }, 5100);
+        }
+
+        function dailyCheckIn() {
+            const now = new Date(); const today = now.toDateString();
+            if(userData.lastCheck === today) return tg.showAlert("Done Today!");
+            const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+            let streak = (userData.lastCheck === yesterday.toDateString()) ? (userData.streak || 0) + 1 : 1;
+            if(streak > 30) streak = 1;
+            const bonus = streak * 100;
+            db.ref('users/' + uid).update({ coins: (userData.coins || 0) + bonus, streak: streak, lastCheck: today });
+            confetti(); tg.showAlert(`Day ${streak} Bonus!`);
+        }
+
+        function selectM(m) {
+            selectedM = m;
+            document.querySelectorAll('#page-withdraw .grid-item').forEach(c => c.classList.remove('selected'));
+            document.getElementById('m-' + m).classList.add('selected');
+        }
+
+        function requestWithdraw() {
+            const amt = document.getElementById('amt').value;
+            const ph = document.getElementById('ph').value;
+            if(!selectedM || !amt || !ph) return tg.showAlert("Fill all fields!");
+            const need = Math.floor(amt / RATE);
+            if(userData.coins < need) return tg.showAlert("Low balance!");
+            db.ref('withdraws').push({ uid, phone: ph, amount: amt, method: selectedM, status: "pending", date: Date.now() });
+            db.ref('users/' + uid).update({ coins: userData.coins - need });
+            tg.showAlert("Submitted Successfully!");
+        }
+
+        function copyLink() {
+            const el = document.createElement('textarea');
+            el.value = BOT_LINK + uid;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            tg.showAlert("Link copied to clipboard!");
+        }
+
+        function checkSpinTimer() {
+            const last = userData.lastSpin || 0; const now = Date.now();
+            const timer = document.getElementById('spin-timer'); const btn = document.getElementById('spin-btn');
+            if (now - last < SPIN_COOLDOWN) {
+                const rem = SPIN_COOLDOWN - (now - last);
+                const h = Math.floor(rem/3600000); const m = Math.floor((rem%3600000)/60000);
+                if(btn) btn.disabled = true; if(timer) timer.innerText = `Next Spin: ${h}h ${m}m`;
+                setTimeout(checkSpinTimer, 1000);
+            } else { if(btn) btn.disabled = false; if(timer) timer.innerText = ""; }
         }
 
         function toggleSidebar() { 
@@ -257,88 +335,6 @@
             document.querySelectorAll('.nav-btn').forEach(nb => nb.classList.remove('active'));
             document.getElementById('btn-' + (p==='spin' ? 'home' : p))?.classList.add('active');
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
-        }
-
-        function renderTasks(tasks) {
-            const listUI = document.getElementById('tasks-list-ui');
-            if(!tasks) { listUI.innerHTML = `<p style="text-align:center; color:#64748b;">No Tasks Available.</p>`; return; }
-            listUI.innerHTML = "";
-            Object.keys(tasks).forEach(k => {
-                const t = tasks[k];
-                listUI.innerHTML += `<div class="task-card" onclick="tg.openLink('${t.link}')">
-                    <div style="width:40px; height:40px; background:rgba(56,189,248,0.1); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--p-blue);"><i class="fas fa-tasks"></i></div>
-                    <div style="flex:1;"><b>${t.title}</b><br><small style="color:var(--p-gold);">+${t.reward} Coins</small></div>
-                </div>`;
-            });
-        }
-
-        function checkSpinTimer() {
-            const last = userData.lastSpin || 0;
-            const now = Date.now();
-            const timer = document.getElementById('spin-timer');
-            const btn = document.getElementById('spin-btn');
-            if (now - last < SPIN_COOLDOWN) {
-                const rem = SPIN_COOLDOWN - (now - last);
-                const h = Math.floor(rem/3600000); const m = Math.floor((rem%3600000)/60000); const s = Math.floor((rem%60000)/1000);
-                if(btn) { btn.disabled = true; btn.style.opacity = "0.5"; }
-                if(timer) timer.innerText = `Available in: ${h}h ${m}m ${s}s`;
-                setTimeout(checkSpinTimer, 1000);
-            } else {
-                if(btn) { btn.disabled = false; btn.style.opacity = "1"; }
-                if(timer) timer.innerText = "";
-            }
-        }
-
-        function startSpin() {
-            if(isSpinning) return;
-            const now = Date.now();
-            if (now - (userData.lastSpin || 0) < SPIN_COOLDOWN) return tg.showAlert("Please wait 24 hours!");
-            isSpinning = true;
-            const wheel = document.getElementById('wheel');
-            const rot = Math.floor(Math.random() * 360) + 3600; 
-            wheel.style.transform = `rotate(${rot}deg)`;
-            setTimeout(() => {
-                isSpinning = false;
-                db.ref('users/' + uid).update({ coins: (userData.coins || 0) + 100, lastSpin: Date.now() });
-                confetti(); tg.showAlert("You won 100 Coins!");
-            }, 5100);
-        }
-
-        function dailyCheckIn() {
-            const now = new Date();
-            const todayStr = now.toDateString();
-            if (userData.lastCheck === todayStr) return tg.showAlert("Today's bonus claimed!");
-            const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-            let newStreak = (userData.lastCheck === yesterday.toDateString()) ? (userData.streak || 0) + 1 : 1;
-            if (newStreak > 30) newStreak = 1;
-            const bonus = newStreak * 100;
-            db.ref('users/' + uid).update({ coins: (userData.coins || 0) + bonus, streak: newStreak, lastCheck: todayStr });
-            confetti(); tg.showAlert(`Day ${newStreak} Bonus: ${bonus} Coins Claimed!`);
-        }
-
-        function selectM(m) {
-            selectedM = m;
-            document.querySelectorAll('#page-withdraw .grid-item').forEach(c => c.classList.remove('selected'));
-            document.getElementById('m-' + m).classList.add('selected');
-        }
-
-        function requestWithdraw() {
-            const amt = document.getElementById('amt').value;
-            const ph = document.getElementById('ph').value;
-            if(!selectedM || !amt || !ph) return tg.showAlert("Fill all fields!");
-            const needed = Math.floor(amt / RATE);
-            if(userData.coins < needed) return tg.showAlert("Low balance!");
-            db.ref('withdraws').push({ uid, phone: ph, amount: amt, method: selectedM, status: "pending", date: Date.now() });
-            db.ref('users/' + uid).update({ coins: userData.coins - needed });
-            tg.showAlert("Withdrawal successful!");
-        }
-
-        function copyLink() {
-            const el = document.createElement('textarea');
-            el.value = BOT_LINK + uid; document.body.appendChild(el);
-            el.select(); document.execCommand('copy');
-            document.body.removeChild(el);
-            tg.showAlert("Link copied to clipboard!");
         }
     </script>
 </body>
