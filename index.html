@@ -3,148 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EarnX Pro - User Panel</title>
+    <title>APEX REWARDS - Professional Edition</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Hind+Siliguri:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --bg: #030712; --primary: #00d2ff; --card: #0f172a; --border: rgba(255, 255, 255, 0.1); --accent: #00ff88; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', 'Hind Siliguri', sans-serif; }
-        body { background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-        header { padding: 15px 20px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; }
-        .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
-        .balance-box { background: linear-gradient(135deg, #1e293b, #030712); padding: 25px; border-radius: 25px; border: 1px solid var(--border); text-align: center; margin-bottom: 20px; }
-        .balance-box h1 { font-size: 38px; color: var(--primary); margin: 5px 0; }
-        .feature-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .icon-box { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: rgba(0,210,255,0.1); color: var(--primary); }
+        :root {
+            --bg: #020617; --glass: rgba(15, 23, 42, 0.7); --border: rgba(255, 255, 255, 0.08);
+            --p-blue: #38bdf8; --p-green: #10b981; --p-rose: #f43f5e; --p-gold: #fbbf24;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: var(--bg); color: #f8fafc; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        
+        #sidebar { position: fixed; left: -250px; top: 0; width: 250px; height: 100%; background: #020617; z-index: 5000; transition: 0.4s; border-right: 1px solid var(--border); padding: 25px 15px; }
+        #sidebar.active { left: 0; }
+        #sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 4999; display: none; }
+        .sidebar-item { padding: 12px; border-radius: 10px; margin-bottom: 5px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #94a3b8; font-size: 15px; }
+
+        header { padding: 12px 18px; background: var(--glass); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 100; }
+        .menu-btn { width: 38px; height: 38px; border-radius: 10px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--p-blue); border: 1px solid var(--border); }
+
+        .content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
         .page { display: none; }
-        .page.active { display: block; }
-        nav { position: fixed; bottom: 15px; left: 10px; right: 10px; height: 75px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-radius: 20px; display: flex; justify-content: space-around; align-items: center; border: 1px solid var(--border); z-index: 1000; }
-        .nav-item { color: #64748b; font-size: 9px; text-align: center; cursor: pointer; flex: 1; }
-        .nav-item i { font-size: 18px; margin-bottom: 3px; }
-        .nav-item.active { color: var(--primary); }
-        input, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid var(--border); background: #000; color: #fff; }
-        .btn-main { width: 100%; margin-top: 15px; background: var(--primary); padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; color: #000; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--card); border: 1px solid var(--primary); border-radius: 20px; padding: 25px; text-align: center; width: 100%; }
-        #ban-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9999; display:none; flex-direction:column; align-items:center; justify-content:center; }
+        .page.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+        .vip-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 12px; }
+        .balance-main { font-size: 28px; font-weight: 800; color: #fff; margin: 2px 0; }
+        
+        .coin-img-large { width: 80px; height: 80px; margin: 10px auto; display: block; animation: spinCoin 4s infinite linear; }
+        @keyframes spinCoin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
+
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .grid-item { background: var(--glass); border: 1px solid var(--border); padding: 15px; border-radius: 18px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .grid-item img { width: 28px; height: 28px; margin-bottom: 5px; margin-left: auto; margin-right: auto; }
+        .grid-item.selected { border-color: var(--p-blue); background: rgba(56, 189, 248, 0.1); }
+        
+        /* Spin Wheel */
+        .spin-box { position: relative; width: 260px; height: 260px; margin: 15px auto; display: flex; align-items: center; justify-content: center; }
+        #wheel { width: 100%; height: 100%; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); }
+        .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55px; z-index: 10; cursor: pointer; }
+
+        nav { position: fixed; bottom: 12px; left: 12px; right: 12px; height: 65px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); border-radius: 20px; display: flex; justify-content: space-around; align-items: center; border: 1px solid var(--border); z-index: 1000; }
+        .nav-btn { color: #64748b; font-size: 9px; text-align: center; flex: 1; cursor: pointer; opacity: 0.6; }
+        .nav-btn.active { color: var(--p-blue); opacity: 1; transform: translateY(-3px); }
+        .nav-btn img { width: 22px; height: 22px; margin-bottom: 3px; display: block; margin-left: auto; margin-right: auto; }
+
+        .main-btn { width: 100%; padding: 13px; border-radius: 15px; border: none; font-weight: 700; background: var(--p-blue); color: #000; cursor: pointer; margin-top: 10px; }
+        .main-btn:disabled { opacity: 0.4; }
+        
+        input { width: 100%; padding: 12px; margin-top: 8px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: #fff; outline: none; }
+        
+        .streak-info { font-size: 11px; color: var(--p-gold); margin-top: 5px; font-weight: 600; }
+        .ref-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 15px; margin-top: 15px; text-align: left; border: 1px solid var(--border); }
+
+        /* Task Card Styling */
+        .task-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--glass); border: 1px solid var(--border); border-radius: 18px; margin-bottom: 12px; cursor: pointer; transition: 0.3s; }
+        .task-card:active { transform: scale(0.96); }
+        .task-icon { width: 40px; height: 40px; background: rgba(56, 189, 248, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--p-blue); }
+        .task-info { flex: 1; text-align: left; }
+        .task-reward { font-size: 11px; color: var(--p-gold); font-weight: 700; }
     </style>
 </head>
 <body>
 
-    <div id="welcome-modal" class="modal">
-        <div class="modal-content">
-            <h2 style="color: var(--primary); margin-bottom: 10px;">স্বাগতম!</h2>
-            <p id="welcome-msg-ui" style="font-size: 14px; line-height: 1.6; color: #ccc;"></p>
-            <button class="btn-main" onclick="closeModal()">ইনকাম শুরু করুন</button>
-        </div>
-    </div>
-
-    <div id="ban-screen">
-        <i class="fas fa-user-slash" style="font-size: 60px; color: red;"></i>
-        <h2 style="margin-top:20px;">অ্যাকাউন্ট ব্যান করা হয়েছে!</h2>
+    <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div id="sidebar">
+        <h3 style="color:var(--p-blue); margin-bottom:20px;">APEX MENU</h3>
+        <div class="sidebar-item" onclick="changePage('home')">🏠 Home</div>
+        <div class="sidebar-item" onclick="changePage('spin')">🎡 Lucky Spin</div>
+        <div class="sidebar-item" onclick="changePage('withdraw')">💰 Cash Out</div>
     </div>
 
     <header>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <img id="user-photo" src="https://via.placeholder.com/40" class="user-avatar">
-            <div>
-                <h4 id="user-name">Loading...</h4>
-                <p id="user-id" style="font-size: 10px; color: #64748b;">ID: --</p>
-            </div>
-        </div>
-        <div style="text-align: right;"><h4 id="top-bdt" style="color: var(--accent);">৳ 0.00</h4></div>
+        <div class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars-staggered"></i></div>
+        <div style="font-weight: 700; color: var(--p-blue);">APEX REWARDS</div>
+        <div id="top-bdt" style="font-size: 12px; font-weight: 700;">৳ 0.00</div>
     </header>
 
     <div class="content">
-        <div id="home" class="page active">
-            <div class="balance-box">
-                <p style="font-size: 13px;">ব্যালেন্স (BDT)</p>
-                <h1 id="bdt-text">0.00</h1>
-                <p style="color: var(--accent); font-size: 14px;">কয়েন: <span id="coins-text">0</span></p>
+        <!-- Home -->
+        <div id="page-home" class="page active">
+            <div class="vip-card">
+                <p style="font-size: 10px; color: #94a3b8;">TOTAL BALANCE</p>
+                <h1 class="balance-main" id="bdt-text">0.00</h1>
+                <img src="https://i.imgur.com/mOvO9dQ.png" class="coin-img-large">
+                <h2 id="coins-text" style="font-size: 22px; color: var(--p-gold);">0</h2>
+                
+                <button class="main-btn" style="background:var(--p-green); color:#fff; width: 85%; margin: 8px auto;" onclick="dailyCheckIn()">🎁 Claim Daily Bonus</button>
+                <p id="streak-text" class="streak-info">Streak: Day 0 (Next: 100 Coins)</p>
             </div>
-            <div id="notice-area" style="background:rgba(0,210,255,0.1); padding:10px; border-radius:10px; margin-bottom:15px; display:none;">
-                <marquee id="marquee-text" style="color:var(--primary); font-size:12px;"></marquee>
-            </div>
-            <div class="feature-card" onclick="changePage('ads')">
-                <div class="icon-box"><i class="fas fa-play"></i></div>
-                <div><h4>Daily Ads</h4><p style="font-size:11px;color:#64748b;">বিজ্ঞাপন দেখে ইনকাম করুন</p></div>
-            </div>
-        </div>
-
-        <div id="ads" class="page">
-            <h3>Watch Ads</h3>
-            <div class="balance-box" style="margin-top:15px;">
-                <p>আজকের লিমিট</p>
-                <h2 id="ad-limit-count">0 / 0</h2>
-            </div>
-            <div class="feature-card" onclick="watchAd()">
-                <div class="icon-box"><i class="fas fa-play-circle"></i></div>
-                <div><h4>বিজ্ঞাপন দেখুন</h4><p id="ad-reward-text" style="font-size:11px;color:#64748b;"></p></div>
+            
+            <div class="feature-grid">
+                <div class="grid-item" onclick="changePage('ads')"><img src="https://i.imgur.com/jJykK8R.png"><p>Ads</p></div>
+                <div class="grid-item" onclick="changePage('tasks')"><img src="https://i.imgur.com/v23Q8QX.png"><p>Tasks</p></div>
+                <div class="grid-item" onclick="changePage('spin')"><img src="https://i.imgur.com/cS0TVjR.png"><p>Spin</p></div>
+                <div class="grid-item" onclick="changePage('profile')"><img src="https://i.imgur.com/ucuYUZh.png"><p>Profile</p></div>
             </div>
         </div>
 
-        <div id="tasks" class="page">
-            <h3>Daily Tasks</h3>
-            <div id="tasks-list-container" style="margin-top:15px;"></div>
+        <!-- Spin Page -->
+        <div id="page-spin" class="page">
+            <h4 style="text-align:center;">Lucky Spin (Every 24h)</h4>
+            <div class="spin-box">
+                <img id="wheel" src="https://i.imgur.com/cS0TVjR.png">
+                <img src="https://i.imgur.com/QOWqJoy.png" class="wheel-center" onclick="startSpin()">
+            </div>
+            <div style="text-align:center;">
+                <p id="spin-timer" style="font-size:13px; color:var(--p-rose);"></p>
+                <button class="main-btn" id="spin-btn" style="width: 70%; margin: 10px auto;" onclick="startSpin()">TAP TO SPIN</button>
+            </div>
         </div>
 
-        <div id="withdraw" class="page">
+        <!-- Withdrawal Page -->
+        <div id="page-withdraw" class="page">
             <h3>Withdraw Money</h3>
-            <div class="balance-box" style="margin-top:15px;">
-                <p>উত্তোলনযোগ্য ব্যালেন্স</p>
-                <h2 id="draw-bdt-text" style="color:var(--accent);">৳ 0.00</h2>
-            </div>
-            <select id="withdraw-method">
-                <option value="bkash">bKash (বিকাশ)</option>
-                <option value="nagad">Nagad (নগদ)</option>
-            </select>
-            <input type="number" id="withdraw-phone" placeholder="বিকাশ/নগদ নাম্বার">
-            <input type="number" id="withdraw-amount" placeholder="টাকার পরিমাণ (৳)">
-            <button class="btn-main" onclick="sendWithdrawRequest()">Withdraw Now</button>
-            <p id="min-draw-info" style="font-size:11px; color:#64748b; margin-top:10px; text-align:center;"></p>
-        </div>
-
-        <div id="refer" class="page">
-            <h3>Refer & Earn</h3>
-            <div style="background:var(--card); padding:25px; border-radius:15px; margin-top:15px; text-align:center; border:1px solid var(--border);">
-                <i class="fas fa-users" style="font-size:40px; color:var(--primary); margin-bottom:15px;"></i>
-                <p>আপনার রেফার লিঙ্ক:</p>
-                <div id="ref-link-box" style="background:#000; padding:12px; margin:15px 0; border-radius:8px; font-size:11px; border: 1px dashed var(--primary); color: var(--primary); word-break: break-all;">Loading...</div>
-                <button class="btn-main" onclick="copyReferLink()">Copy Link</button>
-            </div>
-        </div>
-
-        <div id="profile" class="page">
-            <h3>My Profile</h3>
-            <div style="text-align: center; padding: 30px; background: var(--card); border-radius: 20px; margin-top: 15px; border: 1px solid var(--border);">
-                <img id="prof-img-ui" src="https://via.placeholder.com/100" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--primary);">
-                <h2 id="prof-name-ui" style="margin-top:10px;">User</h2>
-                <div style="display: flex; justify-content: space-around; margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px;">
-                    <div><h4 id="stat-ads-seen">0</h4><p style="font-size:10px;">Ads</p></div>
-                    <div><h4 id="stat-tasks-done">0</h4><p style="font-size:10px;">Tasks</p></div>
-                    <div><h4 id="stat-refer-count">0</h4><p style="font-size:10px;">Refers</p></div>
+            <div class="vip-card" style="margin-top:10px;"><h2 style="color:var(--p-green);">৳ <span id="draw-bdt">0.00</span></h2></div>
+            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 8px;">Select Method:</p>
+            <div style="display:flex; gap:12px; margin-bottom:15px;">
+                <div class="grid-item" style="flex:1" id="m-bkash" onclick="selectM('bkash')">
+                    <img src="https://i.imgur.com/uwvNPyY.png" style="width: 35px; height: 35px;">
+                    <p>bKash</p>
+                </div>
+                <div class="grid-item" style="flex:1" id="m-nagad" onclick="selectM('nagad')">
+                    <img src="https://i.imgur.com/WMswd3J.png" style="width: 35px; height: 35px;">
+                    <p>Nagad</p>
                 </div>
             </div>
-            <h4 style="margin-top: 20px;">রেফার লিস্ট:</h4>
-            <div id="refer-name-list" style="margin-top: 10px;"></div>
+            <input type="number" id="ph" placeholder="Wallet Number">
+            <input type="number" id="amt" placeholder="Amount (৳)">
+            <button class="main-btn" style="background:var(--p-green); color:#fff;" onclick="requestWithdraw()">Confirm</button>
+        </div>
+
+        <!-- Tasks Page (Fixed) -->
+        <div id="page-tasks" class="page">
+            <h3 style="margin-bottom: 15px;">VIP Tasks</h3>
+            <div id="tasks-list-ui">
+                <!-- Admin Tasks will render here -->
+                <p style="color:#64748b; font-size:13px; text-align:center; margin-top:20px;">No Tasks Available.</p>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="page-profile" class="page">
+            <h3>User Profile</h3>
+            <div class="vip-card" style="margin-top:15px;">
+                <img id="prof-img-ui" src="https://via.placeholder.com/60" style="width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--p-blue);">
+                <h3 id="prof-name-ui" style="margin-top:10px;">User</h3>
+                <p id="prof-id-ui" style="font-size:11px; color:#94a3b8;">ID: --</p>
+
+                <div class="ref-box">
+                    <p style="font-size: 11px; color: #94a3b8; margin-bottom: 5px;">রেফার লিংক:</p>
+                    <small id="ref-link-ui" style="color: var(--p-blue); font-weight: 600; word-break: break-all;"></small>
+                    <button class="main-btn" style="padding: 8px; font-size: 11px; margin-top: 10px;" onclick="copyLink()">Copy Link</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ads Page -->
+        <div id="page-ads" class="page">
+            <h3>Watch Ads</h3>
+            <div class="vip-card" style="margin-top:15px;">
+                <p style="font-size:12px;">আজকের লিমিট</p>
+                <h2 id="ad-limit-ui" style="color:var(--p-blue)">0 / 0</h2>
+            </div>
+            <button class="main-btn" onclick="watchAd()">Watch Ad</button>
         </div>
     </div>
 
     <nav>
-        <div class="nav-item active" id="n-home" onclick="changePage('home')"><i class="fas fa-home"></i><br>Home</div>
-        <div class="nav-item" id="n-ads" onclick="changePage('ads')"><i class="fas fa-play-circle"></i><br>Ads</div>
-        <div class="nav-item" id="n-tasks" onclick="changePage('tasks')"><i class="fas fa-tasks"></i><br>Tasks</div>
-        <div class="nav-item" id="n-withdraw" onclick="changePage('withdraw')"><i class="fas fa-wallet"></i><br>Withdraw</div>
-        <div class="nav-item" id="n-refer" onclick="changePage('refer')"><i class="fas fa-user-plus"></i><br>Refer</div>
-        <div class="nav-item" id="n-profile" onclick="changePage('profile')"><i class="fas fa-user-circle"></i><br>Profile</div>
+        <div class="nav-btn active" id="btn-home" onclick="changePage('home')"><img src="https://i.imgur.com/MYtcYxA.png">Home</div>
+        <div class="nav-btn" id="btn-ads" onclick="changePage('ads')"><img src="https://i.imgur.com/jJykK8R.png">Ads</div>
+        <div class="nav-btn" id="btn-tasks" onclick="changePage('tasks')"><img src="https://i.imgur.com/v23Q8QX.png">Tasks</div>
+        <div class="nav-btn" id="btn-withdraw" onclick="changePage('withdraw')"><img src="https://i.imgur.com/QCnuzcr.png">Bank</div>
+        <div class="nav-btn" id="btn-profile" onclick="changePage('profile')"><img src="https://i.imgur.com/ucuYUZh.png">Profile</div>
     </nav>
 
     <script>
@@ -153,118 +192,166 @@
             authDomain: "apex-rewards-69214.firebaseapp.com",
             databaseURL: "https://apex-rewards-69214-default-rtdb.firebaseio.com",
             projectId: "apex-rewards-69214",
-            storageBucket: "apex-rewards-69214.firebasestorage.app",
+            storageBucket: "apex-rewards-69214.appspot.com",
             messagingSenderId: "959858037259",
             appId: "1:959858037259:web:5f2480cec372474c8a2d0e"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const tg = window.Telegram.WebApp;
-        tg.expand();
 
-        const user = tg.initDataUnsafe.user || { id: 12345, first_name: "TestUser" };
+        const user = tg.initDataUnsafe.user || { id: 12345, first_name: "User" };
         const uid = user.id;
-        const startParam = tg.initDataUnsafe.start_param;
         const RATE = 120 / 200000;
+        const SPIN_COOLDOWN = 24 * 60 * 60 * 1000;
+        const BOT_LINK = "https://t.me/ApexRewards_Bot/apex_earn1?startapp=";
 
-        let userData = {};
-        let settings = {};
+        let userData = {}; let settings = {}; let selectedM = "";
 
+        // User Data Sync
         db.ref('users/' + uid).on('value', snap => {
-            const data = snap.val();
-            if(!data) {
-                const newUser = { id: uid, name: user.first_name, coins: 0, adsToday: 0, tasksToday: 0, adsSeen: 0, tasksSeen: 0, referrals: 0, referredBy: startParam || null, status: 'active' };
-                db.ref('users/' + uid).set(newUser);
-                if(startParam && startParam != uid) {
-                    db.ref('settings/refer_bonus').once('value', sBonus => {
-                        const bonus = parseInt(sBonus.val() || 0);
-                        db.ref('users/' + startParam).transaction(u => {
-                            if(u) {
-                                u.coins = (u.coins || 0) + bonus;
-                                u.referrals = (u.referrals || 0) + 1;
-                                if(!u.refList) u.refList = [];
-                                u.refList.push(user.first_name);
-                            }
-                            return u;
-                        });
-                    });
-                }
-                setTimeout(() => document.getElementById('welcome-modal').style.display = 'flex', 1000);
-            } else {
-                userData = data;
-                if(userData.status === 'banned') document.getElementById('ban-screen').style.display = 'flex';
-                updateUI();
-            }
+            userData = snap.val() || { coins: 0, adsToday: 0, lastSpin: 0, streak: 0, lastCheck: "" };
+            updateUI();
+            checkSpinTimer();
         });
 
-        db.ref('settings').on('value', snap => {
-            settings = snap.val() || {};
-            applyAdminControl();
+        // Settings & Tasks Sync
+        db.ref('settings').on('value', snap => { 
+            settings = snap.val() || { ads_limit: 10, ad_reward: 50 }; 
+            document.getElementById('ad-limit-ui').innerText = `${userData.adsToday || 0} / ${settings.ads_limit || 0}`;
+            renderTasks(settings.tasks); // Render tasks whenever settings change
         });
-
-        function applyAdminControl() {
-            if(settings.notice) {
-                document.getElementById('notice-area').style.display = 'block';
-                document.getElementById('marquee-text').innerText = settings.notice;
-            } else { document.getElementById('notice-area').style.display = 'none'; }
-            document.getElementById('welcome-msg-ui').innerText = settings.welcome_msg || "স্বাগতম!";
-            document.getElementById('min-draw-info').innerText = `মিনিমাম উইথড্র: ৳${settings.min_withdraw || 20}`;
-            document.getElementById('ad-limit-count').innerText = `${userData.adsToday || 0} / ${settings.ads_limit || 0}`;
-            document.getElementById('ad-reward-text').innerText = `বিজ্ঞাপনে পাবেন ${settings.ad_reward || 0} কয়েন`;
-
-            const list = document.getElementById('tasks-list-container');
-            list.innerHTML = "";
-            if(settings.tasks) {
-                Object.keys(settings.tasks).forEach(key => {
-                    const t = settings.tasks[key];
-                    if(t.enabled) {
-                        list.innerHTML += `<div class="feature-card" onclick="doTask('${key}', '${t.link}')"><div class="icon-box"><i class="fas fa-link"></i></div><div><h4>${t.title}</h4><p style="font-size:11px;color:#64748b;">Reward: ${t.reward} Coins</p></div></div>`;
-                    }
-                });
-            }
-        }
 
         function updateUI() {
             const bdt = (userData.coins * RATE).toFixed(2);
-            document.getElementById('coins-text').innerText = userData.coins.toLocaleString();
             document.getElementById('bdt-text').innerText = bdt;
-            document.getElementById('draw-bdt-text').innerText = "৳ " + bdt;
             document.getElementById('top-bdt').innerText = "৳ " + bdt;
-            document.getElementById('stat-ads-seen').innerText = userData.adsSeen;
-            document.getElementById('stat-tasks-done').innerText = userData.tasksSeen;
-            document.getElementById('stat-refer-count').innerText = userData.referrals;
-            document.getElementById('ref-link-box').innerText = "https://t.me/ApexRewards_Bot/apex_earn1?startapp=" + uid;
-            const refNames = document.getElementById('refer-name-list');
-            refNames.innerHTML = "";
-            if(userData.refList) {
-                userData.refList.forEach(name => { refNames.innerHTML += `<div style="background:var(--card); padding:10px; border-radius:10px; margin-bottom:5px; font-size:12px;">${name}</div>`; });
+            document.getElementById('draw-bdt').innerText = bdt;
+            document.getElementById('coins-text').innerText = (userData.coins || 0).toLocaleString();
+            document.getElementById('prof-name-ui').innerText = user.first_name;
+            document.getElementById('prof-id-ui').innerText = "ID: " + uid;
+            document.getElementById('ref-link-ui').innerText = BOT_LINK + uid;
+            
+            const nextReward = (Math.min(userData.streak || 0, 29) + 1) * 100;
+            const streakTxt = document.getElementById('streak-text');
+            if(streakTxt) streakTxt.innerText = `Streak: Day ${userData.streak || 0} (Next: ${nextReward} Coins)`;
+        }
+
+        // --- Render Tasks from Admin ---
+        function renderTasks(tasks) {
+            const listUI = document.getElementById('tasks-list-ui');
+            if(!tasks) {
+                listUI.innerHTML = `<p style="color:#64748b; font-size:13px; text-align:center; margin-top:20px;">No Tasks Available.</p>`;
+                return;
             }
-            if(user.photo_url) { document.getElementById('user-photo').src = user.photo_url; document.getElementById('prof-img-ui').src = user.photo_url; }
+            
+            listUI.innerHTML = "";
+            Object.keys(tasks).forEach(key => {
+                const t = tasks[key];
+                listUI.innerHTML += `
+                    <div class="task-card" onclick="openTask('${t.link}', '${key}', ${t.reward})">
+                        <div class="task-icon"><i class="fas fa-tasks"></i></div>
+                        <div class="task-info">
+                            <b style="font-size:14px; color:#fff;">${t.title}</b><br>
+                            <span class="task-reward">+${t.reward} Coins Reward</span>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color:#64748b; font-size:12px;"></i>
+                    </div>
+                `;
+            });
         }
 
-        const AdController = window.Adsgram.init({ blockId: "22538" });
-        async function watchAd() {
+        function openTask(link, id, reward) {
+            tg.openLink(link);
+            // Optionally: You can add logic here to claim reward after 30 seconds or verify.
+            // For now, it just opens the link.
+        }
+
+        function copyLink() {
+            const link = BOT_LINK + uid;
+            const tempInput = document.createElement("input");
+            tempInput.value = link;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            tg.showAlert("রেফার লিংক কপি হয়েছে!");
+        }
+
+        function toggleSidebar() { 
+            const sb = document.getElementById('sidebar');
+            sb.classList.toggle('active'); 
+            document.getElementById('sidebar-overlay').style.display = sb.classList.contains('active') ? 'block' : 'none';
+        }
+
+        function changePage(p) {
+            document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
+            document.getElementById('page-' + p).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + (p==='spin'?'home':p))?.classList.add('active');
+            if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+        }
+
+        function selectM(m) {
+            selectedM = m;
+            document.querySelectorAll('#page-withdraw .grid-item').forEach(c => c.classList.remove('selected'));
+            document.getElementById('m-' + m).classList.add('selected');
+        }
+
+        function dailyCheckIn() {
+            const now = new Date();
+            const todayStr = now.toDateString();
+            if (userData.lastCheck === todayStr) return tg.showAlert("আজকের বোনাস নেওয়া শেষ!");
+            const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+            let newStreak = (userData.lastCheck === yesterday.toDateString()) ? (userData.streak || 0) + 1 : 1;
+            if (newStreak > 30) newStreak = 1;
+            const bonus = newStreak * 100;
+            db.ref('users/' + uid).update({ coins: (userData.coins || 0) + bonus, streak: newStreak, lastCheck: todayStr });
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            tg.showAlert(`Day ${newStreak} - আপনি ${bonus} কয়েন পেয়েছেন!`);
+        }
+
+        function checkSpinTimer() {
+            const last = userData.lastSpin || 0;
+            const now = Date.now();
+            const timer = document.getElementById('spin-timer');
+            const btn = document.getElementById('spin-btn');
+            if (now - last < SPIN_COOLDOWN) {
+                const rem = SPIN_COOLDOWN - (now - last);
+                const h = Math.floor(rem/3600000); const m = Math.floor((rem%3600000)/60000);
+                if(btn) btn.disabled = true;
+                if(timer) timer.innerText = `Next in: ${h}h ${m}m`;
+            } else {
+                if(btn) btn.disabled = false;
+                if(timer) timer.innerText = "";
+            }
+        }
+
+        function startSpin() {
+            const wheel = document.getElementById('wheel');
+            const rot = Math.floor(Math.random() * 360) + 3600; 
+            wheel.style.transform = `rotate(${rot}deg)`;
+            setTimeout(() => {
+                db.ref('users/' + uid).update({ coins: (userData.coins || 0) + 100, lastSpin: Date.now() });
+                tg.showAlert("আপনি ১০০ কয়েন জিতেছেন!");
+            }, 5100);
+        }
+
+        function watchAd() {
             if(userData.adsToday >= settings.ads_limit) return tg.showAlert("লিমিট শেষ!");
-            try {
-                await AdController.show();
-                db.ref('users/' + uid).update({ coins: userData.coins + parseInt(settings.ad_reward), adsToday: userData.adsToday + 1, adsSeen: (userData.adsSeen || 0) + 1 });
-                tg.showAlert("কয়েন যোগ হয়েছে!");
-            } catch(e) { tg.showAlert("বিজ্ঞাপন লোড হয়নি!"); }
+            db.ref('users/' + uid).update({ coins: (userData.coins || 0) + parseInt(settings.ad_reward), adsToday: (userData.adsToday || 0) + 1 });
+            tg.showAlert("সফল!");
         }
 
-        function closeModal() { document.getElementById('welcome-modal').style.display = 'none'; }
-        function changePage(pageId) { document.querySelectorAll('.page').forEach(x => x.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active')); document.getElementById(pageId).classList.add('active'); document.getElementById('n-' + pageId).classList.add('active'); }
-        function copyReferLink() { navigator.clipboard.writeText(document.getElementById('ref-link-box').innerText); tg.showAlert("কপি হয়েছে!"); }
-        function doTask(id, link) { tg.openLink(link); const t = settings.tasks[id]; db.ref('users/' + uid).update({ coins: userData.coins + parseInt(t.reward), tasksSeen: (userData.tasksSeen || 0) + 1 }); tg.showAlert("রিওয়ার্ড যোগ হয়েছে!"); }
-        function sendWithdrawRequest() {
-            const amount = parseFloat(document.getElementById('withdraw-amount').value);
-            const phone = document.getElementById('withdraw-phone').value;
-            if(amount < settings.min_withdraw) return tg.showAlert(`মিনিমাম ৳${settings.min_withdraw}`);
-            if(amount > (userData.coins * RATE)) return tg.showAlert("ব্যালেন্স নেই!");
-            const coinsDeduct = Math.floor(amount / RATE);
-            db.ref('withdraws').push({ uid, phone, amount, method: document.getElementById('withdraw-method').value, status: 'pending', date: new Date().toLocaleString() });
-            db.ref('users/' + uid).update({ coins: userData.coins - coinsDeduct });
-            tg.showAlert("অনুরোধ সফল!");
+        function requestWithdraw() {
+            const amt = document.getElementById('amt').value;
+            const ph = document.getElementById('ph').value;
+            if(!selectedM || !amt || !ph) return tg.showAlert("সব তথ্য দিন!");
+            const needed = Math.floor(amt / RATE);
+            if(userData.coins < needed) return tg.showAlert("ব্যালেন্স কম!");
+            db.ref('withdraws').push({ uid, phone: ph, amount: amt, method: selectedM, status: "pending", date: Date.now() });
+            db.ref('users/' + uid).update({ coins: userData.coins - needed });
+            tg.showAlert("সফল হয়েছে!");
         }
     </script>
 </body>
