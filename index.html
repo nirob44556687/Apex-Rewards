@@ -3,230 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EarnX Pro - Official</title>
+    <title>EarnX Pro - Ads & Profile</title>
     
-    <script src="https://adsgram.ai/js/adsgram-ad-sdk.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Hind+Siliguri:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
             --bg: #030712;
             --primary: #00d2ff;
-            --secondary: #9d50bb;
-            --accent: #00ff88;
             --card: #0f172a;
             --border: rgba(255, 255, 255, 0.1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', 'Hind Siliguri', sans-serif; }
-        body { background: var(--bg); color: #fff; height: 100vh; overflow: hidden; }
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'Outfit', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh;
+            overflow: hidden;
+        }
 
-        /* ১. স্বাগতম পপআপ */
-        #welcome-popup { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 25px; }
-        .notice-card { background: var(--card); border: 2px solid var(--primary); padding: 30px; border-radius: 30px; text-align: center; max-width: 350px; }
+        /* হেডার ও প্রোফাইল সেকশন */
+        header {
+            padding: 20px;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-        /* ২. মেইন অ্যাপ লেআউট */
-        #main-app { display: none; height: 100vh; flex-direction: column; }
-        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: #0f172a; border-bottom: 1px solid var(--border); }
-        .u-pic { width: 35px; height: 35px; border-radius: 8px; border: 1px solid var(--primary); object-fit: cover; }
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+        }
 
-        /* সাইডবার */
-        #sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card); z-index: 1000; transition: 0.3s; padding: 20px; border-right: 1px solid var(--border); }
-        #sidebar.active { left: 0; }
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; }
+        .user-info h2 { margin: 0; font-size: 18px; }
+        .user-info p { margin: 0; font-size: 12px; color: #64748b; }
 
-        .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 110px; }
+        /* মেইন কন্টেন্ট */
+        .main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-        /* কার্ড ডিজাইন */
-        .balance-card { background: linear-gradient(135deg, #1e293b, #030712); padding: 25px; border-radius: 25px; border: 1px solid var(--border); text-align: center; margin-bottom: 20px; }
-        .balance-card h1 { font-size: 40px; margin: 10px 0; color: var(--primary); }
+        .balance-box {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-        .feature-card { background: var(--card); border: 1px solid var(--border); padding: 18px; border-radius: 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .icon-box { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .balance-box h1 { font-size: 48px; margin: 10px 0; color: var(--primary); }
 
-        /* নেভিগেশন বার */
-        nav { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 70px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-radius: 20px; display: flex; justify-content: space-around; align-items: center; border: 1px solid var(--border); z-index: 100; }
-        .nav-item { color: #64748b; font-size: 11px; text-align: center; cursor: pointer; }
-        .nav-item.active { color: var(--primary); }
-        .center-btn { width: 55px; height: 55px; background: var(--primary); border-radius: 18px; color: #000; margin-top: -30px; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3); }
+        /* বাটন স্টাইল */
+        .ad-button {
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-        .page { display: none; }
-        .page.active { display: block; }
-        input, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid var(--border); background: #000; color: #fff; }
+        .ad-button:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <div id="welcome-popup">
-        <div class="notice-card">
-            <h2 style="color: var(--primary);">স্বাগতম!</h2>
-            <p style="font-size: 14px; margin-top: 10px; color: #ccc;">টেলিগ্রাম থেকে ভিডিও অ্যাড দেখে ইনকাম শুরু করুন।</p>
-            <button onclick="enterApp()" style="width: 100%; margin-top: 25px; background: var(--primary); padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer;">প্রবেশ করুন</button>
+    <header>
+        <img id="user-photo" src="https://via.placeholder.com/50" alt="Profile" class="user-avatar">
+        <div class="user-info">
+            <h2 id="user-name">Loading...</h2>
+            <p id="user-id">ID: 00000000</p>
         </div>
-    </div>
+    </header>
 
-    <div class="overlay" onclick="toggleSidebar(false)"></div>
-    <div id="sidebar">
-        <div style="text-align: center; margin-bottom: 30px;">
-            <img id="side-img" src="https://via.placeholder.com/60" style="width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary);">
-            <h3 id="side-name" style="margin-top: 10px;">User Name</h3>
-        </div>
-        <div onclick="changePage('home')" style="padding: 12px; cursor: pointer;"><i class="fas fa-home"></i> Home</div>
-        <div onclick="changePage('wallet')" style="padding: 12px; cursor: pointer;"><i class="fas fa-wallet"></i> Wallet</div>
-        <div onclick="changePage('refer')" style="padding: 12px; cursor: pointer;"><i class="fas fa-users"></i> Refer</div>
-        <div onclick="changePage('profile')" style="padding: 12px; cursor: pointer;"><i class="fas fa-user-circle"></i> Profile</div>
-    </div>
-
-    <div id="main-app">
-        <header>
-            <i class="fas fa-bars" onclick="toggleSidebar(true)" style="font-size: 20px; cursor: pointer;"></i>
-            <h3 style="letter-spacing: 1px;">EARNX PRO</h3>
-            <img id="head-img" src="https://via.placeholder.com/35" class="u-pic">
-        </header>
-
-        <div class="content">
-            <div id="home" class="page active">
-                <div class="balance-card">
-                    <p style="font-size: 12px; color: #64748b;">Current Balance</p>
-                    <h1 id="user-balance">$0.00</h1>
-                    <span id="user-coins" style="color: var(--accent);">Coins: 0</span>
-                </div>
-
-                <div class="feature-card" onclick="watchAd()">
-                    <div class="icon-box" style="background: rgba(0,210,255,0.1); color: var(--primary);"><i class="fas fa-play"></i></div>
-                    <div><h4>Watch Video Ad</h4><p style="font-size: 11px; color: #64748b;">Earn 50 Coins per Ad</p></div>
-                </div>
-
-                <div class="feature-card" onclick="changePage('refer')">
-                    <div class="icon-box" style="background: rgba(0,255,136,0.1); color: var(--accent);"><i class="fas fa-user-plus"></i></div>
-                    <div><h4>Refer Friends</h4><p style="font-size: 11px; color: #64748b;">Get bonus on invite</p></div>
-                </div>
-            </div>
-
-            <div id="wallet" class="page">
-                <h3>Withdraw</h3>
-                <div class="balance-card" style="margin-top: 15px;">
-                    <p>Withdrawal Balance</p>
-                    <h2 id="draw-val" style="color: var(--accent);">$0.00</h2>
-                </div>
-                <select id="method">
-                    <option value="bkash">bKash</option>
-                    <option value="nagad">Nagad</option>
-                </select>
-                <input type="number" id="phone" placeholder="নম্বর দিন">
-                <button onclick="tg.showAlert('অনুরোধ গ্রহণ করা হয়েছে!')" style="width: 100%; margin-top: 15px; padding: 15px; background: var(--primary); border: none; border-radius: 10px; font-weight: bold;">উইথড্র করুন</button>
-            </div>
-
-            <div id="refer" class="page">
-                <h3>Invite & Earn</h3>
-                <div style="background: var(--card); padding: 20px; border-radius: 15px; margin-top: 15px; text-align: center;">
-                    <p>Your Referral Link:</p>
-                    <code id="ref-link" style="display: block; background: #000; padding: 10px; margin: 10px 0; border-radius: 5px; font-size: 12px;">https://t.me/YourBot?start=000</code>
-                    <button onclick="copyRef()" style="background: var(--accent); color: #000; padding: 8px 15px; border-radius: 5px; border: none; font-weight: bold;">Copy</button>
-                </div>
-            </div>
-
-            <div id="profile" class="page">
-                <div style="text-align: center; padding: 30px; background: var(--card); border-radius: 20px;">
-                    <img id="prof-img" src="https://via.placeholder.com/100" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary);">
-                    <h2 id="prof-name" style="margin-top: 10px;">User</h2>
-                    <p id="prof-id" style="color: #64748b; font-size: 13px;">ID: 00000000</p>
-                </div>
-            </div>
+    <div class="main">
+        <div class="balance-box">
+            <p>আপনার বর্তমান ব্যালেন্স</p>
+            <h1 id="balance">0.00</h1>
+            <p style="color: #00ff88;">Coins Earned</p>
         </div>
 
-        <nav>
-            <div class="nav-item active" id="n-home" onclick="changePage('home')"><i class="fas fa-home"></i><br>Home</div>
-            <div class="nav-item" id="n-wallet" onclick="changePage('wallet')"><i class="fas fa-wallet"></i><br>Wallet</div>
-            <div class="center-btn" onclick="watchAd()"><i class="fas fa-play"></i></div>
-            <div class="nav-item" id="n-refer" onclick="changePage('refer')"><i class="fas fa-users"></i><br>Refer</div>
-            <div class="nav-item" id="n-profile" onclick="changePage('profile')"><i class="fas fa-user"></i><br>Profile</div>
-        </nav>
+        <button class="ad-button" id="ad-trigger">
+            <i class="fas fa-play"></i> Show Ad & Earn
+        </button>
     </div>
 
     <script>
+        // ১. টেলিগ্রাম ডাটা লোড
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.ready();
-        tg.setHeaderColor('#0f172a');
 
-        // ১. Adsgram সেটআপ (ID: 22538)
-        const AdController = window.Adsgram.init({ blockId: "22538" });
+        const nameElement = document.getElementById('user-name');
+        const idElement = document.getElementById('user-id');
+        const photoElement = document.getElementById('user-photo');
 
-        // ২. ইউজার ডাটা লোড
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
-            document.getElementById('side-name').innerText = user.first_name;
-            document.getElementById('prof-name').innerText = user.first_name + " " + (user.last_name || "");
-            document.getElementById('prof-id').innerText = "ID: " + user.id;
-            document.getElementById('ref-link').innerText = "https://t.me/YourBotUser?start=" + user.id;
-            
+            nameElement.innerText = user.first_name + (user.last_name ? " " + user.last_name : "");
+            idElement.innerText = "ID: " + user.id;
             if (user.photo_url) {
-                document.getElementById('head-img').src = user.photo_url;
-                document.getElementById('side-img').src = user.photo_url;
-                document.getElementById('prof-img').src = user.photo_url;
+                photoElement.src = user.photo_url;
             }
+        } else {
+            nameElement.innerText = "Guest User";
         }
 
-        function enterApp() {
-            document.getElementById('welcome-popup').style.display = 'none';
-            document.getElementById('main-app').style.display = 'flex';
-        }
+        // ২. Adsgram সেটআপ (ID: 22538)
+        const AdController = window.Adsgram.init({ blockId: "22538" });
+        const adBtn = document.getElementById('ad-trigger');
+        const balanceText = document.getElementById('balance');
+        let currentBalance = 0;
 
-        function changePage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            if(document.getElementById('n-'+pageId)) document.getElementById('n-'+pageId).classList.add('active');
-            toggleSidebar(false);
-        }
+        adBtn.addEventListener('click', () => {
+            AdController.show().then((result) => {
+                // ভিডিও দেখা সফল হলে
+                currentBalance += 50; // প্রতি বিজ্ঞাপনে ৫০ পয়েন্ট
+                balanceText.innerText = currentBalance.toFixed(2);
+                tg.showAlert("অভিনন্দন! আপনি ৫০ পয়েন্ট রিওয়ার্ড পেয়েছেন।");
+            }).catch((error) => {
+                // ভিডিও লোড না হলে বা কেটে দিলে
+                console.error(error);
+                tg.showAlert("বিজ্ঞাপনটি পূর্ণ দেখা হয়নি বা লোড হতে সমস্যা হয়েছে।");
+            });
+        });
 
-        function toggleSidebar(force) {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.overlay');
-            if (force === false || sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-                overlay.style.display = 'none';
-            } else {
-                sidebar.classList.add('active');
-                overlay.style.display = 'block';
-            }
-        }
-
-        // ৩. বিজ্ঞাপন ও ইনকাম লজিক
-        let balance = 0.00;
-        let coins = 0;
-
-        async function watchAd() {
-            try {
-                // বিজ্ঞাপন দেখানো (ID: 22538)
-                const result = await AdController.show();
-                
-                // রিওয়ার্ড যোগ করা
-                coins += 50;
-                balance += 0.05;
-                updateDisplay();
-                tg.showAlert("অভিনন্দন! আপনি ৫০ কয়েন ($0.05) পেয়েছেন।");
-                tg.HapticFeedback.impactOccurred('medium');
-            } catch (err) {
-                tg.showAlert("বিজ্ঞাপনটি লোড হয়নি বা আপনি ভিডিওটি কেটে দিয়েছেন।");
-            }
-        }
-
-        function updateDisplay() {
-            document.getElementById('user-balance').innerText = "$" + balance.toFixed(2);
-            document.getElementById('draw-val').innerText = "$" + balance.toFixed(2);
-            document.getElementById('user-coins').innerText = "Coins: " + coins;
-        }
-
-        function copyRef() {
-            const link = document.getElementById('ref-link').innerText;
-            navigator.clipboard.writeText(link);
-            tg.showAlert("লিঙ্ক কপি হয়েছে!");
-        }
+        // অ্যাপ রেডি
+        tg.ready();
     </script>
 </body>
 </html>
